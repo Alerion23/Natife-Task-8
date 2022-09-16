@@ -6,23 +6,33 @@ import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.lang.RuntimeException
 import kotlin.random.Random
 
 class NumberGenerator {
 
     private val startValue = 1
     private val endValue = 20
+    var thread: Thread? = null
 
     private val _liveDataValue = MutableLiveData<Int>()
     val liveDataValue: LiveData<Int> = _liveDataValue
 
     fun liveDataCase() {
-        Thread {
-            for (i in 0..10) {
-                _liveDataValue.postValue(generateNumber())
-                Thread.sleep(2000)
+        var isRunning = true
+        thread = Thread {
+            while (isRunning) {
+                try {
+                    for (i in 0..10) {
+                        _liveDataValue.postValue(generateNumber())
+                        Thread.sleep(2000)
+                    }
+                } catch (e: InterruptedException) {
+                    isRunning = false
+                }
             }
-        }.start()
+        }
+        thread?.start()
     }
 
     fun coroutineCase(): Flow<Int> {

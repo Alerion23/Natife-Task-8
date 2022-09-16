@@ -29,19 +29,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeGenerator() {
-//        generator.liveDataValue.observe(this) {
-//            binding?.number?.text = it.toString()
-//        }
-        lifecycleScope.launchWhenStarted {
-            generator.coroutineCase().collectLatest {
-                binding?.number?.text = it.toString()
-            }
+        generator.liveDataValue.observe(this) {
+            binding?.number?.text = it.toString()
         }
+//        lifecycleScope.launchWhenStarted {
+//            generator.coroutineCase().collectLatest {
+//                binding?.number?.text = it.toString()
+//            }
+//        }
     }
 
     private fun startGenerateNumber() {
         binding?.startButton?.setOnClickListener {
-//            generator.liveDataCase()
+            generator.thread?.interrupt()
+            generator.liveDataCase()
 //            disposables.add(generator.rxCase()
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -49,6 +50,11 @@ class MainActivity : AppCompatActivity() {
 //                    binding?.number?.text = it.toString()
 //                })
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        generator.thread?.interrupt()
     }
 
     override fun onDestroy() {
