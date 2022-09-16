@@ -2,7 +2,6 @@ package com.example.natifetask8
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +12,7 @@ class NumberGenerator {
 
     private val startValue = 1
     private val endValue = 20
+    private var isCompleted = false
 
     private val _liveDataValue = MutableLiveData<Int>()
     val liveDataValue: LiveData<Int> = _liveDataValue
@@ -31,11 +31,18 @@ class NumberGenerator {
     }
 
     fun coroutineCase() {
-        CoroutineScope(Dispatchers.IO).launch {
+        val job = GlobalScope.launch(Dispatchers.IO) {
+            isCompleted = false
             for (i in 0..10) {
                 _flowValue.emit(generateNumber())
                 delay(2000)
             }
+            isCompleted = true
+        }
+        if (!isCompleted) {
+            job.start()
+        } else {
+            job.cancel()
         }
     }
 
