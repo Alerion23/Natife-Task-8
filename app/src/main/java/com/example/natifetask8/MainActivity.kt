@@ -41,14 +41,14 @@ class MainActivity : AppCompatActivity() {
 
     private fun startGenerateNumber() {
         binding?.startButton?.setOnClickListener {
-            generator.thread?.interrupt()
-            generator.liveDataCase()
-//            disposables.add(generator.rxCase()
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {
-//                    binding?.number?.text = it.toString()
-//                })
+//            generator.thread?.interrupt()
+//            generator.liveDataCase()
+            disposables.add(generator.rxCase()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    binding?.number?.text = it.toString()
+                })
         }
     }
 

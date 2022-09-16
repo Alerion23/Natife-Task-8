@@ -6,7 +6,7 @@ import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.lang.RuntimeException
+import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
 class NumberGenerator {
@@ -14,6 +14,7 @@ class NumberGenerator {
     private val startValue = 1
     private val endValue = 20
     var thread: Thread? = null
+        private set
 
     private val _liveDataValue = MutableLiveData<Int>()
     val liveDataValue: LiveData<Int> = _liveDataValue
@@ -45,13 +46,8 @@ class NumberGenerator {
     }
 
     fun rxCase(): Observable<Int> {
-        return Observable.create {
-            for (i in 0..10) {
-                it.onNext(generateNumber())
-                Thread.sleep(2000)
-            }
-            it.onComplete()
-        }
+        return Observable.interval(0, 2, TimeUnit.SECONDS)
+            .map { generateNumber() }
     }
 
     private fun generateNumber(): Int {
