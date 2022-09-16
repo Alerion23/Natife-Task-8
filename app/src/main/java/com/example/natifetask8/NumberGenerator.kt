@@ -4,22 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.rxjava3.core.Observable
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 
 class NumberGenerator {
 
     private val startValue = 1
     private val endValue = 20
-    private var isCompleted = false
 
     private val _liveDataValue = MutableLiveData<Int>()
     val liveDataValue: LiveData<Int> = _liveDataValue
-
-    private val _flowValue = MutableStateFlow<Int>(0)
-    val flowValue = _flowValue.asStateFlow()
-
 
     fun liveDataCase() {
         Thread {
@@ -30,19 +25,12 @@ class NumberGenerator {
         }.start()
     }
 
-    fun coroutineCase() {
-        val job = GlobalScope.launch(Dispatchers.IO) {
-            isCompleted = false
+    fun coroutineCase(): Flow<Int> {
+        return flow {
             for (i in 0..10) {
-                _flowValue.emit(generateNumber())
+                emit(generateNumber())
                 delay(2000)
             }
-            isCompleted = true
-        }
-        if (!isCompleted) {
-            job.start()
-        } else {
-            job.cancel()
         }
     }
 

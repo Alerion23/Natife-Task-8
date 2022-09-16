@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 //            binding?.number?.text = it.toString()
 //        }
         lifecycleScope.launchWhenStarted {
-            generator.flowValue.collectLatest {
+            generator.coroutineCase().collectLatest {
                 binding?.number?.text = it.toString()
             }
         }
@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
     private fun startGenerateNumber() {
         binding?.startButton?.setOnClickListener {
 //            generator.liveDataCase()
-            generator.coroutineCase()
 //            disposables.add(generator.rxCase()
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
